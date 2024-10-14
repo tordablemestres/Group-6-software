@@ -8,4 +8,9 @@ const getExpenses = async () => {
     return response.data;
 };
 
-export default { getExpenses };
+const addExpense = async (expenseData) => {
+    const response = await axios.post('/api/expenses', expenseData);
+    return response.data;
+};
+
+export default { getExpenses, addExpense };

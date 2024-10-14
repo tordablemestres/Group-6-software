@@ -20,13 +20,23 @@ const BudgetInputForm = () => {
     };
 
     // Aquí manejamos lo que sucede cuando se envía el formulario
-    const handleAddExpense = () => {
+    const handleAddExpense = async () => {
         if (expenseName && expenseAmount > 0) {
-            // Lógica para agregar el gasto
-            // (Se conectará con el backend en los pasos siguientes)
-            console.log("Gasto añadido:", expenseName, expenseAmount);
+            const newExpense = {
+                description: expenseName,
+                amount: parseFloat(expenseAmount),
+            };
+            try {
+                const savedExpense = await expenseService.addExpense(newExpense);  // Enviar el gasto al backend
+                console.log("Expense added successfully:", savedExpense);  // Mostrar en consola para verificar
+                setExpenseName('');  // Limpiar campos de entrada
+                setExpenseAmount(0);
+            } catch (error) {
+                console.error("Error adding expense:", error);
+            }
         }
     };
+
 
     return (
         <div>
