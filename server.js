@@ -15,7 +15,7 @@ mongoose.connect('mongodb://localhost:27017/lessstress')
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.log(err));
 
-const expenseRoutes = require('./routes/expenses');
+const expenseRoutes = require('./routes (API routes definition)/expenses');
 app.use('/api/expenses', expenseRoutes);
 
 // Start server
