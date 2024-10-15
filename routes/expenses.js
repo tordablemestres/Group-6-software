@@ -1,6 +1,7 @@
+// routes/expenses.js
 const express = require('express');
 const router = express.Router();
-const Expense = require('../models (dataschemes for mongo)/Expense');
+const Expense = require('../models/Expense');
 
 // GET all expenses
 router.get('/', async (req, res) => {
@@ -15,9 +16,9 @@ router.get('/', async (req, res) => {
 // POST a new expense
 router.post('/', async (req, res) => {
     const expense = new Expense({
-        user: req.body.user,
+        amount: req.body.amount,
         description: req.body.description,
-        amount: req.body.amount
+        category: req.body.category
     });
 
     try {
@@ -27,5 +28,7 @@ router.post('/', async (req, res) => {
         res.status(400).json({ message: err.message });
     }
 });
+
+// Additional routes (PUT, DELETE) can be added as needed
 
 module.exports = router;

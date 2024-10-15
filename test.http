@@ -1,0 +1,13 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=WebStorm
+
+###
+POST http://localhost:5000/api/expenses
+Content-Type: application/json
+
+{
+  "amount": 100,
+  "description": "Compra de supermercado",
+  "category": "Alimentación"
+}

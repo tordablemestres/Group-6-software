@@ -1,75 +1,104 @@
-import expenseService from '../services/expenseService';  // Asegúrate de la ruta correcta
+// client/src/components/BudgetInputForm.js
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-import React, { useState } from 'react';
+function BudgetInputForm() {
+    const [budget, setBudget] = useState('');
+    const [amount, setAmount] = useState('');
+    const [description, setDescription] = useState('');
+    const [category, setCategory] = useState('');
+    const [expenses, setExpenses] = useState([]);
+    const [totalExpenses, setTotalExpenses] = useState(0);
 
-const BudgetInputForm = () => {
-    const [budget, setBudget] = useState(0);  // Almacena el presupuesto total
-    const [expenseName, setExpenseName] = useState('');  // Almacena el nombre del gasto
-    const [expenseAmount, setExpenseAmount] = useState(0);  // Almacena la cantidad del gasto
-
-    const handleBudgetChange = (e) => {
-        setBudget(parseFloat(e.target.value));  // Actualiza el presupuesto
-    };
-
-    const handleExpenseNameChange = (e) => {
-        setExpenseName(e.target.value);  // Actualiza el nombre del gasto
-    };
-
-    const handleExpenseAmountChange = (e) => {
-        setExpenseAmount(e.target.value);  // Actualiza la cantidad del gasto
-    };
-
-    // Aquí manejamos lo que sucede cuando se envía el formulario
-    const handleAddExpense = async () => {
-        if (expenseName && expenseAmount > 0) {
-            const newExpense = {
-                description: expenseName,
-                amount: parseFloat(expenseAmount),
-            };
+    // Función para obtener todos los gastos al cargar el componente
+    useEffect(() => {
+        const fetchExpenses = async () => {
             try {
-                const savedExpense = await expenseService.addExpense(newExpense);  // Enviar el gasto al backend
-                console.log("Expense added successfully:", savedExpense);  // Mostrar en consola para verificar
-                setExpenseName('');  // Limpiar campos de entrada
-                setExpenseAmount(0);
-            } catch (error) {
-                console.error("Error adding expense:", error);
+                const res = await axios.get('/api/expenses');
+                setExpenses(res.data);
+                // Calcular el total de gastos
+                const total = res.data.reduce((acc, expense) => acc + expense.amount, 0);
+                setTotalExpenses(total);
+            } catch (err) {
+                console.error(err);
             }
+        };
+        fetchExpenses();
+    }, []);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const newExpense = {
+            amount: parseFloat(amount),
+            description,
+            category,
+        };
+        try {
+            const res = await axios.post('/api/expenses', newExpense);
+            setExpenses([...expenses, res.data]);
+            setTotalExpenses(totalExpenses + parseFloat(amount));
+            setAmount('');
+            setDescription('');
+            setCategory('');
+        } catch (err) {
+            console.error(err);
         }
     };
 
-
     return (
         <div>
-            <h2>Budget Management</h2>
+            <h2>Gestión de Presupuesto</h2>
             <div>
-                <label>Total Budget:</label>
+                <label>Presupuesto Total:</label>
                 <input
                     type="number"
                     value={budget}
-                    onChange={handleBudgetChange}
-                    placeholder="Enter your total budget"
+                    onChange={(e) => setBudget(parseFloat(e.target.value))}
                 />
             </div>
+            <h3>Total de Gastos: {totalExpenses}</h3>
+            <h3>Presupuesto Restante: {budget - totalExpenses}</h3>
 
-            <div>
-                <label>Expense Name:</label>
-                <input
-                    type="text"
-                    value={expenseName}
-                    onChange={handleExpenseNameChange}
-                    placeholder="Enter expense description"
-                />
-                <label>Amount:</label>
-                <input
-                    type="number"
-                    value={expenseAmount}
-                    onChange={handleExpenseAmountChange}
-                    placeholder="Enter expense amount"
-                />
-                <button onClick={handleAddExpense}>Add Expense</button>
-            </div>
+            <h2>Agregar Gasto</h2>
+            <form onSubmit={handleSubmit}>
+                <div>
+                    <label>Cantidad:</label>
+                    <input
+                        type="number"
+                        value={amount}
+                        onChange={(e) => setAmount(e.target.value)}
+                        required
+                    />
+                </div>
+                <div>
+                    <label>Descripción:</label>
+                    <input
+                        type="text"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                    />
+                </div>
+                <div>
+                    <label>Categoría:</label>
+                    <input
+                        type="text"
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                    />
+                </div>
+                <button type="submit">Agregar</button>
+            </form>
+
+            <h2>Lista de Gastos</h2>
+            <ul>
+                {expenses.map((expense) => (
+                    <li key={expense._id}>
+                        {expense.description}: ${expense.amount}
+                    </li>
+                ))}
+            </ul>
         </div>
     );
-};
+}
 
 export default BudgetInputForm;
