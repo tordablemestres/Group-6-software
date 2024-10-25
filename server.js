@@ -10,14 +10,9 @@ app.use(express.json());
 app.use(cors());
 
 // Connect to MongoDB
-mongoose
-    .connect('mongodb://localhost:27017/lessstress', {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        useCreateIndex: true, // For deprecation warnings
-    })
+mongoose.connect('mongodb://localhost:27017/lessstress')
     .then(() => console.log('MongoDB connected'))
-    .catch((err) => console.log(err));
+    .catch((err) => console.error('MongoDB connection error:', err));
 
 // Basic route
 app.get('/', (req, res) => {
