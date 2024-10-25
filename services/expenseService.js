@@ -1,3 +1,4 @@
+// lógica para comunicarte con el backend
 import axios from 'axios';
 
 const API_URL = '/api/expenses';

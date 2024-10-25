@@ -7,7 +7,7 @@ POST http://localhost:5000/api/expenses
 Content-Type: application/json
 
 {
-  "amount": 100,
-  "description": "Compra de supermercado",
-  "category": "Alimentación"
+  "amount": 120,
+  "description": "Compra de amazon",
+  "category": "Ocio"
 }

@@ -6,6 +6,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'bundle.js',
+        //publicPath: '/', // Add this line if you have routing
     },
     module: {
         rules: [
@@ -15,6 +16,11 @@ module.exports = {
                 use: {
                     loader: 'babel-loader',
                 },
+            },
+            // Add CSS loader if you're using CSS
+            {
+                test: /\.css$/,
+                use: ['style-loader', 'css-loader'],
             },
         ],
     },
@@ -35,6 +41,6 @@ module.exports = {
         proxy: {
             '/api': 'http://localhost:5000',
         },
+        historyApiFallback: true, // Add this if you have routing
     },
-
 };
