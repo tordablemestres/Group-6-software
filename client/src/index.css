@@ -1,0 +1,55 @@
+/* Ensure that styles are not hiding content */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding: 0;
+}
+
+.login-container,
+.signup-container {
+    width: 300px;
+    margin: 100px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.login-container h1,
+.signup-container h1 {
+    margin-bottom: 20px;
+}
+
+.login-container input,
+.signup-container input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.login-container button,
+.signup-container button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.login-container button:hover,
+.signup-container button:hover {
+    background-color: #0056b3;
+}
+
+.login-container p,
+.signup-container p {
+    margin-top: 15px;
+}
+
+.login-container a,
+.signup-container a {
+    color: #007bff;
+    text-decoration: none;
+}

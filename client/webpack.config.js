@@ -6,7 +6,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'bundle.js',
-        //publicPath: '/', // Add this line if you have routing
+        // publicPath can be removed or adjusted
     },
     module: {
         rules: [
@@ -17,7 +17,7 @@ module.exports = {
                     loader: 'babel-loader',
                 },
             },
-            // Add CSS loader if you're using CSS
+            // CSS loaders
             {
                 test: /\.css$/,
                 use: ['style-loader', 'css-loader'],
@@ -33,14 +33,17 @@ module.exports = {
         }),
     ],
     devServer: {
-        static: {
-            directory: path.join(__dirname, 'public'),
-        },
+        static: false, // Disable static file serving
         compress: true,
         port: 3000,
         proxy: {
             '/api': 'http://localhost:5000',
         },
-        historyApiFallback: true, // Add this if you have routing
+        historyApiFallback: {
+            disableDotRule: true,
+        },
+        client: {
+            overlay: true,
+        },
     },
 };

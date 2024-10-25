@@ -11,7 +11,11 @@ app.use(cors());
 
 // Connect to MongoDB
 mongoose
-    .connect('mongodb://localhost:27017/lessstress', { useNewUrlParser: true, useUnifiedTopology: true })
+    .connect('mongodb://localhost:27017/lessstress', {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useCreateIndex: true, // For deprecation warnings
+    })
     .then(() => console.log('MongoDB connected'))
     .catch((err) => console.log(err));
 
@@ -24,8 +28,11 @@ app.get('/', (req, res) => {
 const expenseRoutes = require('./routes/expenses');
 app.use('/api/expenses', expenseRoutes);
 
-const taskRoutes = require('./routes/tasks'); // Add this line
-app.use('/api/tasks', taskRoutes); // Add this line
+const taskRoutes = require('./routes/tasks');
+app.use('/api/tasks', taskRoutes);
+
+const authRoutes = require('./routes/auth'); // Add this line
+app.use('/api/auth', authRoutes); // Add this line
 
 // Serve static files (React application)
 if (process.env.NODE_ENV === 'production') {
