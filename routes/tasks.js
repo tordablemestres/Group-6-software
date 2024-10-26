@@ -3,64 +3,59 @@ const express = require('express');
 const router = express.Router();
 const Task = require('../models/Task');
 
-// Get all tasks
+// GET all tasks
 router.get('/', async (req, res) => {
     try {
-        const tasks = await Task.find().sort({ createdAt: -1 });
+        const tasks = await Task.find();
         res.json(tasks);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error('Error fetching tasks:', err);
+        res.status(500).json({ message: 'Server error' });
     }
 });
 
-// Create a new task
+// POST a new task
 router.post('/', async (req, res) => {
+    const { description } = req.body;
+
+    if (!description) {
+        return res.status(400).json({ message: 'Description is required' });
+    }
+
     const task = new Task({
-        name: req.body.name,
+        description,
+        completed: false,
     });
 
     try {
         const newTask = await task.save();
         res.status(201).json(newTask);
     } catch (err) {
-        res.status(400).json({ message: err.message });
+        console.error('Error adding task:', err);
+        res.status(500).json({ message: 'Server error' });
     }
 });
 
-// Update task status
-router.patch('/:id', async (req, res) => {
+// PUT update task completion
+router.put('/:id', async (req, res) => {
+    const taskId = req.params.id;
+    const { completed } = req.body;
+
     try {
-        const task = await Task.findById(req.params.id);
-        if (task == null) {
-            return res.status(404).json({ message: 'Cannot find task' });
+        const updatedTask = await Task.findByIdAndUpdate(
+            taskId,
+            { completed },
+            { new: true }
+        );
+
+        if (!updatedTask) {
+            return res.status(404).json({ message: 'Task not found' });
         }
 
-        if (req.body.name != null) {
-            task.name = req.body.name;
-        }
-        if (req.body.completed != null) {
-            task.completed = req.body.completed;
-        }
-
-        const updatedTask = await task.save();
         res.json(updatedTask);
     } catch (err) {
-        res.status(400).json({ message: err.message });
-    }
-});
-
-// Delete a task
-router.delete('/:id', async (req, res) => {
-    try {
-        const task = await Task.findById(req.params.id);
-        if (task == null) {
-            return res.status(404).json({ message: 'Cannot find task' });
-        }
-
-        await task.remove();
-        res.json({ message: 'Deleted Task' });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error('Error updating task:', err);
+        res.status(500).json({ message: 'Server error' });
     }
 });
 

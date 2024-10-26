@@ -1,0 +1,7 @@
+/* App.css */
+.main-container::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+

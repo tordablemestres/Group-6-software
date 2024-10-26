@@ -4,14 +4,20 @@ const mongoose = require('mongoose');
 const ExpenseSchema = new mongoose.Schema({
     amount: {
         type: Number,
-        required: true
+        required: true,
     },
-    description: String,
+    description: {
+        type: String,
+        required: true,
+    },
+    category: {
+        type: String,
+        required: true,
+    },
     date: {
         type: Date,
-        default: Date.now
+        default: Date.now,
     },
-    category: String
 });
 
 module.exports = mongoose.model('Expense', ExpenseSchema);

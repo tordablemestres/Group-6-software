@@ -1,0 +1,62 @@
+/* BudgetInputForm.css */
+.budget-input-form {
+    width: 48%;
+    float: left;
+}
+
+.expenses-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.expenses-table th,
+.expenses-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.expenses-table th {
+    background-color: #f2f2f2;
+    text-align: center;
+}
+
+.expenses-table input {
+    width: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.expenses-table button {
+    padding: 5px 10px;
+}
+
+.budget-summary {
+    margin-top: 20px;
+}
+
+.budget-summary div {
+    margin-bottom: 10px;
+}
+
+.budget-summary label {
+    margin-right: 10px;
+}
+
+.budget-summary input {
+    padding: 5px;
+}
+
+.add-expense-form {
+    margin-bottom: 20px;
+}
+
+.add-expense-form input {
+    width: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.add-expense-form button {
+    padding: 5px 10px;
+}

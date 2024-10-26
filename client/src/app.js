@@ -1,9 +1,11 @@
+// src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import BudgetInputForm from './components/BudgetInputForm';
 import TodoList from './components/TodoList';
 import Login from './components/Login';
 import Signup from './components/Signup';
+import './App.css';
 
 function App() {
     return (
@@ -18,23 +20,15 @@ function App() {
                     <Route
                         path="/home"
                         element={
-                            <>
+                            <div className="main-container">
                                 <BudgetInputForm />
                                 <TodoList />
-                            </>
+                            </div>
                         }
                     />
                 </Routes>
             </div>
         </Router>
-    );
-}
-
-function App2() {
-    return (
-        <div>
-            <h1>Hello World</h1>
-        </div>
     );
 }
 

@@ -9,41 +9,47 @@ router.get('/', async (req, res) => {
         const expenses = await Expense.find();
         res.json(expenses);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error('Error fetching expenses:', err);
+        res.status(500).json({ message: 'Server error' });
     }
 });
 
 // POST a new expense
 router.post('/', async (req, res) => {
+    const { amount, description, category } = req.body;
+
+    if (!description || !category || isNaN(amount)) {
+        return res.status(400).json({ message: 'Please provide all required fields.' });
+    }
+
     const expense = new Expense({
-        amount: req.body.amount,
-        description: req.body.description,
-        category: req.body.category
+        amount,
+        description,
+        category,
     });
 
     try {
         const newExpense = await expense.save();
         res.status(201).json(newExpense);
     } catch (err) {
-        res.status(400).json({ message: err.message });
+        console.error('Error adding expense:', err);
+        res.status(500).json({ message: 'Server error.' });
     }
 });
 
-// Additional routes (PUT, DELETE) can be added as needed
-// Delete an expense by ID
-// Eliminar un gasto por ID
+// DELETE an expense
 router.delete('/:id', async (req, res) => {
     const expenseId = req.params.id;
 
     try {
         const deletedExpense = await Expense.findByIdAndDelete(expenseId);
         if (!deletedExpense) {
-            return res.status(404).json({ message: 'Gasto no encontrado' });
+            return res.status(404).json({ message: 'Expense not found' });
         }
-        res.status(200).json({ message: 'Gasto eliminado exitosamente' });
+        res.status(200).json({ message: 'Expense deleted successfully' });
     } catch (error) {
-        console.error('Error al eliminar el gasto:', error);
-        res.status(500).json({ message: 'Error del servidor' });
+        console.error('Error deleting expense:', error);
+        res.status(500).json({ message: 'Server error' });
     }
 });
 
