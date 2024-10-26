@@ -1,6 +1,7 @@
 // client/src/components/BudgetInputForm.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import ExpensesList from './ExpensesList';
 
 function BudgetInputForm() {
     const [budget, setBudget] = useState('');
@@ -89,17 +90,15 @@ function BudgetInputForm() {
                 <button type="submit">Agregar</button>
             </form>
 
-            <h2>Lista de Gastos</h2>
-            <ul>
-                {expenses.map((expense) => (
-                    <li key={expense._id}>
-                        {expense.description}: ${expense.amount}
-                    </li>
-                ))}
-            </ul>
+            {/* Usar el componente ExpensesList */}
+            <ExpensesList
+                expenses={expenses}
+                setExpenses={setExpenses}
+                totalExpenses={totalExpenses}
+                setTotalExpenses={setTotalExpenses}
+            />
         </div>
     );
 }
 
 export default BudgetInputForm;
-

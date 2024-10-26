@@ -30,5 +30,21 @@ router.post('/', async (req, res) => {
 });
 
 // Additional routes (PUT, DELETE) can be added as needed
+// Delete an expense by ID
+// Eliminar un gasto por ID
+router.delete('/:id', async (req, res) => {
+    const expenseId = req.params.id;
+
+    try {
+        const deletedExpense = await Expense.findByIdAndDelete(expenseId);
+        if (!deletedExpense) {
+            return res.status(404).json({ message: 'Gasto no encontrado' });
+        }
+        res.status(200).json({ message: 'Gasto eliminado exitosamente' });
+    } catch (error) {
+        console.error('Error al eliminar el gasto:', error);
+        res.status(500).json({ message: 'Error del servidor' });
+    }
+});
 
 module.exports = router;
