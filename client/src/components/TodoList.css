@@ -1,56 +1,25 @@
-/* src/components/TodoList.css */
-.todo-list-container {
-    width: 48%;
-    float: right;
+/* client/src/components/TodoList.css */
+
+.todo-container {
+    /* Adjust padding and margins */
 }
 
-.todo-table {
+.todo-container input,
+.todo-container button {
     width: 100%;
-    border-collapse: collapse;
+    padding: 10px;
+    margin-bottom: 10px;
 }
 
-.todo-table th,
-.todo-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    vertical-align: top;
-}
-
-.todo-table th {
-    background-color: #f2f2f2;
-    text-align: center;
-}
-
-.task-list {
-    list-style-type: none;
+.todo-container ul {
+    list-style: none;
     padding: 0;
 }
 
-.task-list li {
-    cursor: pointer;
-    margin: 5px 0;
+.todo-container li {
+    padding: 5px 0;
 }
 
-.task-list li:hover {
-    background-color: #f9f9f9;
-}
-
-.bullet-point {
-    color: #007bff;
-    margin-right: 8px;
-}
-
-.add-task-form {
-    display: flex;
-    margin-bottom: 20px;
-}
-
-.add-task-form input {
-    flex: 1;
-    padding: 5px;
-    margin-right: 5px;
-}
-
-.add-task-form button {
-    padding: 5px 10px;
+.todo-container h2, .todo-container h3 {
+    color: #2c3e50;
 }

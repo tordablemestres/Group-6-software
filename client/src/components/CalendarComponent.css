@@ -1,0 +1,49 @@
+/* client/src/components/CalendarComponent.css */
+
+.calendar-container {
+    /* Adjust padding and margins */
+}
+
+.calendar-container input,
+.calendar-container button {
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.calendar-container h2, .calendar-container h3 {
+    color: #2c3e50;
+}
+
+/* Adjust calendar styles */
+.react-calendar {
+    border: none;
+    font-family: Arial, sans-serif;
+}
+
+.react-calendar__tile {
+    height: 100px;
+}
+
+.react-calendar__tile--active {
+    background-color: #87cefa !important; /* Light blue */
+}
+
+.react-calendar__tile--now {
+    background-color: #add8e6 !important; /* Lighter blue */
+}
+.event-tile {
+    background-color: #add8e6; /* Light blue background */
+    color: white;
+    padding: 5px;
+    border-radius: 3px;
+    margin-bottom: 2px;
+    cursor: pointer;
+}
+
+.event-tile.completed {
+    background-color: gray;
+}
+
+.event-tile.hidden {
+    display: none;
+}

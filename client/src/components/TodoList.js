@@ -1,107 +1,85 @@
-// src/components/TodoList.js
+// client/src/components/TodoList.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './TodoList.css'; // Import the CSS file for styling
+import './TodoList.css';
 
 function TodoList() {
-    const [tasks, setTasks] = useState([]);
-    const [taskDescription, setTaskDescription] = useState('');
+    const [taskName, setTaskName] = useState('');
+    const [tasksPending, setTasksPending] = useState([]);
+    const [tasksCompleted, setTasksCompleted] = useState([]);
 
     // Fetch tasks on component mount
     useEffect(() => {
-        const fetchTasks = async () => {
-            try {
-                const res = await axios.get('/api/tasks');
-                setTasks(res.data);
-            } catch (error) {
-                console.error('Error fetching tasks:', error);
-            }
-        };
-
         fetchTasks();
     }, []);
 
-    // Add a new task
-    const handleAddTask = async (e) => {
+    // Function to fetch tasks from the backend
+    const fetchTasks = async () => {
+        try {
+            const res = await axios.get('/api/tasks');
+            const allTasks = res.data;
+            setTasksPending(allTasks.filter((task) => !task.completed));
+            setTasksCompleted(allTasks.filter((task) => task.completed));
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    // Function to add a new task
+    const addTask = async (e) => {
         e.preventDefault();
-        if (!taskDescription.trim()) {
-            alert('Please enter a task description.');
-            return;
-        }
+        if (taskName.trim() === '') return;
+
         try {
-            const res = await axios.post('/api/tasks', { description: taskDescription });
-            setTasks([...tasks, res.data]);
-            setTaskDescription('');
-        } catch (error) {
-            console.error('Error adding task:', error);
-            alert('Error adding task');
+            const res = await axios.post('/api/tasks', { name: taskName });
+            setTasksPending([res.data, ...tasksPending]);
+            setTaskName('');
+        } catch (err) {
+            console.error(err);
         }
     };
 
-    // Toggle task completion
-    const handleToggleComplete = async (task) => {
+    // Function to mark a task as completed
+    const completeTask = async (id) => {
         try {
-            await axios.put(`/api/tasks/${task._id}`, {
-                completed: !task.completed,
-            });
-            setTasks(
-                tasks.map((t) => (t._id === task._id ? { ...t, completed: !t.completed } : t))
-            );
-        } catch (error) {
-            console.error('Error updating task:', error);
+            const res = await axios.patch(`/api/tasks/${id}`, { completed: true });
+            // Update the tasks lists
+            setTasksPending(tasksPending.filter((task) => task._id !== id));
+            setTasksCompleted([res.data, ...tasksCompleted]);
+        } catch (err) {
+            console.error(err);
         }
     };
-
-    // Separate tasks into incomplete and completed
-    const incompleteTasks = tasks.filter((task) => !task.completed);
-    const completedTasks = tasks.filter((task) => task.completed);
 
     return (
-        <div className="todo-list-container">
+        <div>
             <h2>To-Do List</h2>
-            {/* Add New Task Form */}
-            <form onSubmit={handleAddTask} className="add-task-form">
+            <form onSubmit={addTask}>
                 <input
                     type="text"
-                    value={taskDescription}
-                    onChange={(e) => setTaskDescription(e.target.value)}
-                    placeholder="Add a new task"
-                    required
+                    placeholder="Enter task name"
+                    value={taskName}
+                    onChange={(e) => setTaskName(e.target.value)}
                 />
                 <button type="submit">Add Task</button>
             </form>
-            <table className="todo-table">
-                <thead>
-                <tr>
-                    <th>Incomplete Tasks</th>
-                    <th>Completed Tasks</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    {/* Incomplete Tasks Column */}
-                    <td>
-                        <ul className="task-list">
-                            {incompleteTasks.map((task) => (
-                                <li key={task._id} onClick={() => handleToggleComplete(task)}>
-                                    <span className="bullet-point">•</span> {task.description}
-                                </li>
-                            ))}
-                        </ul>
-                    </td>
-                    {/* Completed Tasks Column */}
-                    <td>
-                        <ul className="task-list">
-                            {completedTasks.map((task) => (
-                                <li key={task._id} onClick={() => handleToggleComplete(task)}>
-                                    <span className="bullet-point">•</span> {task.description}
-                                </li>
-                            ))}
-                        </ul>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+
+            <h3>Pending Tasks</h3>
+            <ul>
+                {tasksPending.map((task) => (
+                    <li key={task._id}>
+                        {task.name}
+                        <button onClick={() => completeTask(task._id)}>Mark as Done</button>
+                    </li>
+                ))}
+            </ul>
+
+            <h3>Completed Tasks</h3>
+            <ul>
+                {tasksCompleted.map((task) => (
+                    <li key={task._id}>{task.name}</li>
+                ))}
+            </ul>
         </div>
     );
 }

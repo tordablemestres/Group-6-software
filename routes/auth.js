@@ -1,8 +1,29 @@
 // routes/auth.js
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User');
+const User = require('../models/User'); // Adjust the path as necessary
 const jwt = require('jsonwebtoken');
+
+// Signup route
+router.post('/signup', async (req, res) => {
+    const { username, password } = req.body;
+    try {
+        // Check if the user already exists
+        let user = await User.findOne({ username });
+        if (user) {
+            return res.status(400).json({ message: 'User already exists' });
+        }
+
+        // Create a new user without hashing the password here
+        user = new User({ username, password });
+        await user.save();
+
+        res.status(201).json({ message: 'User created successfully' });
+    } catch (error) {
+        console.error('Error during signup:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
 
 // Login route
 router.post('/login', async (req, res) => {
@@ -21,9 +42,7 @@ router.post('/login', async (req, res) => {
         }
 
         // Passwords match, login successful
-        // Issue JWT
-        const token = jwt.sign({ id: user._id }, 'your_jwt_secret', { expiresIn: '1h' }); // Replace with your JWT secret
-        res.status(200).json({ message: 'Login successful', token });
+        res.status(200).json({ message: 'Login successful' });
     } catch (error) {
         console.error('Error during login:', error);
         res.status(500).json({ message: 'Server error' });

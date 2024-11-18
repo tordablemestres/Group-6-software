@@ -1,7 +1,38 @@
-/* App.css */
-.main-container::after {
-    content: "";
-    clear: both;
-    display: table;
+/* client/src/App.css */
+
+.App {
+    font-family: Arial, sans-serif;
+    background-color: #f0f8ff; /* Light blue background */
+    color: #333;
+    height: 100vh;
+    margin: 0;
 }
 
+.main-container {
+    display: flex;
+    height: 100%;
+}
+
+.sidebar {
+    width: 25%;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #ffffff;
+    overflow-y: auto;
+}
+
+.calendar {
+    flex: 1;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #ffffff;
+    overflow-y: auto;
+}
+
+.sidebar, .calendar {
+    border: 1px solid #d3d3d3;
+}
+
+h2, h3 {
+    color: #2c3e50;
+}

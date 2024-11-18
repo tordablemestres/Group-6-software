@@ -8,6 +8,6 @@ Content-Type: application/json
 
 {
   "amount": 120,
-  "description": "Compra de amazon",
-  "category": "Ocio"
+  "description": "Amazon",
+  "category": "Entertainment"
 }

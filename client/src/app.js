@@ -1,11 +1,12 @@
-// src/App.js
+// client/src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import BudgetInputForm from './components/BudgetInputForm';
 import TodoList from './components/TodoList';
 import Login from './components/Login';
 import Signup from './components/Signup';
-import './App.css';
+import CalendarComponent from './components/CalendarComponent';
+import './App.css'; // Import the new CSS file
 
 function App() {
     return (
@@ -21,8 +22,15 @@ function App() {
                         path="/home"
                         element={
                             <div className="main-container">
-                                <BudgetInputForm />
-                                <TodoList />
+                                <div className="sidebar">
+                                    <BudgetInputForm />
+                                </div>
+                                <div className="calendar">
+                                    <CalendarComponent />
+                                </div>
+                                <div className="sidebar">
+                                    <TodoList />
+                                </div>
                             </div>
                         }
                     />
