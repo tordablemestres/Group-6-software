@@ -1,56 +1,57 @@
 // client/src/components/Signup.js
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function Signup() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const navigate = useNavigate(); // Ensure useNavigate is used instead of useHistory
+    const navigate = useNavigate();
+    const [error, setError] = useState('');
 
-    const handleSignup = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // Send signup request to the backend
             const res = await axios.post('/api/auth/signup', { username, password });
-            if (res.status === 201) {
-                alert('User created successfully. Please log in.');
-                // Redirect to the login page
-                navigate('/'); // Use navigate instead of history.push
-            }
+            // Store token in localStorage
+            localStorage.setItem('token', res.data.token);
+            // Redirect to home page
+            navigate('/home');
         } catch (error) {
-            alert('Error signing up: ' + error.response.data.message);
+            console.error('Error during signup:', error);
+            setError('User already exists');
         }
     };
 
     return (
         <div className="signup-container">
-            <h1>LessStress</h1>
-            <form onSubmit={handleSignup}>
-                <div>
-                    <label>Username</label>
-                    <br />
+            <h2>Sign Up</h2>
+            {error && <p className="error-message">{error}</p>}
+            <form onSubmit={handleSubmit} className="signup-form">
+                <div className="form-group">
+                    <label>Username:</label>
                     <input
                         type="text"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         required
+                        className="form-input"
                     />
                 </div>
-                <div>
-                    <label>Password</label>
-                    <br />
+                <div className="form-group">
+                    <label>Password:</label>
                     <input
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
+                        className="form-input"
                     />
                 </div>
-                <button type="submit">Sign up</button>
+                <button type="submit" className="submit-button">Sign Up</button>
             </form>
             <p>
-                Already have an account? <Link to="/">Login</Link>
+                Already have an account? <a href="/">Login</a>
             </p>
         </div>
     );

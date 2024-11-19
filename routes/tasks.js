@@ -2,48 +2,41 @@
 const express = require('express');
 const router = express.Router();
 const Task = require('../models/Task');
+const auth = require('../middleware/auth');
 
-// GET all tasks
-router.get('/', async (req, res) => {
+// Get all tasks for the authenticated user
+router.get('/', auth, async (req, res) => {
     try {
-        const tasks = await Task.find();
+        const tasks = await Task.find({ user: req.user.userId });
         res.json(tasks);
-    } catch (err) {
-        console.error('Error fetching tasks:', err);
+    } catch (error) {
+        console.error('Error fetching tasks:', error);
         res.status(500).json({ message: 'Server error' });
     }
 });
 
-// POST a new task
-router.post('/', async (req, res) => {
-    const { description } = req.body;
-
-    if (!description) {
-        return res.status(400).json({ message: 'Description is required' });
-    }
-
-    const task = new Task({
-        description,
-        completed: false,
-    });
-
+// Create a new task
+router.post('/', auth, async (req, res) => {
+    const { name } = req.body;
     try {
-        const newTask = await task.save();
-        res.status(201).json(newTask);
-    } catch (err) {
-        console.error('Error adding task:', err);
+        const newTask = new Task({
+            name,
+            user: req.user.userId,
+        });
+        const savedTask = await newTask.save();
+        res.status(201).json(savedTask);
+    } catch (error) {
+        console.error('Error creating task:', error);
         res.status(500).json({ message: 'Server error' });
     }
 });
 
-// PUT update task completion
-router.put('/:id', async (req, res) => {
-    const taskId = req.params.id;
+// Update a task
+router.patch('/:id', auth, async (req, res) => {
     const { completed } = req.body;
-
     try {
-        const updatedTask = await Task.findByIdAndUpdate(
-            taskId,
+        const updatedTask = await Task.findOneAndUpdate(
+            { _id: req.params.id, user: req.user.userId },
             { completed },
             { new: true }
         );
@@ -53,8 +46,22 @@ router.put('/:id', async (req, res) => {
         }
 
         res.json(updatedTask);
-    } catch (err) {
-        console.error('Error updating task:', err);
+    } catch (error) {
+        console.error('Error updating task:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Delete a task
+router.delete('/:id', auth, async (req, res) => {
+    try {
+        const deletedTask = await Task.findOneAndDelete({ _id: req.params.id, user: req.user.userId });
+        if (!deletedTask) {
+            return res.status(404).json({ message: 'Task not found' });
+        }
+        res.json({ message: 'Task deleted' });
+    } catch (error) {
+        console.error('Error deleting task:', error);
         res.status(500).json({ message: 'Server error' });
     }
 });

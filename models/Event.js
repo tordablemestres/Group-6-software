@@ -6,26 +6,26 @@ const EventSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    date: { // Date of the event
-        type: Date,
+    date: {
+        type: Date, // Date of the event
         required: true,
     },
-    color: { // Color assigned to the event
+    color: {
         type: String,
-        default: '#000000', // Default color black
+        default: '#000000',
     },
-    completed: { // Whether the event is completed
+    completed: {
         type: Boolean,
         default: false,
     },
-    hidden: { // Whether the event is hidden from the interface
+    hidden: {
         type: Boolean,
         default: false,
     },
-    user: { // User who created the event
+    user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        // required: true, // Uncomment when authentication is implemented
+        required: true,
     },
 });
 

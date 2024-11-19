@@ -1,6 +1,6 @@
 // client/src/components/TodoList.js
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import taskService from '../services/taskService';
 import './TodoList.css';
 
 function TodoList() {
@@ -16,10 +16,9 @@ function TodoList() {
     // Function to fetch tasks from the backend
     const fetchTasks = async () => {
         try {
-            const res = await axios.get('/api/tasks');
-            const allTasks = res.data;
-            setTasksPending(allTasks.filter((task) => !task.completed));
-            setTasksCompleted(allTasks.filter((task) => task.completed));
+            const tasks = await taskService.getTasks();
+            setTasksPending(tasks.filter((task) => !task.completed));
+            setTasksCompleted(tasks.filter((task) => task.completed));
         } catch (err) {
             console.error(err);
         }
@@ -31,8 +30,8 @@ function TodoList() {
         if (taskName.trim() === '') return;
 
         try {
-            const res = await axios.post('/api/tasks', { name: taskName });
-            setTasksPending([res.data, ...tasksPending]);
+            const newTask = await taskService.addTask({ name: taskName });
+            setTasksPending([newTask, ...tasksPending]);
             setTaskName('');
         } catch (err) {
             console.error(err);
@@ -42,17 +41,16 @@ function TodoList() {
     // Function to mark a task as completed
     const completeTask = async (id) => {
         try {
-            const res = await axios.patch(`/api/tasks/${id}`, { completed: true });
-            // Update the tasks lists
+            const updatedTask = await taskService.updateTask(id, { completed: true });
             setTasksPending(tasksPending.filter((task) => task._id !== id));
-            setTasksCompleted([res.data, ...tasksCompleted]);
+            setTasksCompleted([updatedTask, ...tasksCompleted]);
         } catch (err) {
             console.error(err);
         }
     };
 
     return (
-        <div>
+        <div className="todo-container">
             <h2>To-Do List</h2>
             <form onSubmit={addTask}>
                 <input

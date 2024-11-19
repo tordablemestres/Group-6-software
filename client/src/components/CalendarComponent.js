@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import axios from 'axios';
+import eventService from '../services/eventService';
 import './CalendarComponent.css';
 
 function CalendarComponent() {
@@ -15,8 +15,8 @@ function CalendarComponent() {
         // Fetch events from backend
         const fetchEvents = async () => {
             try {
-                const res = await axios.get('/api/events');
-                setEvents(res.data);
+                const events = await eventService.getEvents();
+                setEvents(events);
             } catch (error) {
                 console.error('Error fetching events:', error);
             }
@@ -48,8 +48,8 @@ function CalendarComponent() {
                 date: date,
                 color: newEvent.color,
             };
-            const res = await axios.post('/api/events', eventData);
-            setEvents([...events, res.data]);
+            const addedEvent = await eventService.addEvent(eventData);
+            setEvents([...events, addedEvent]);
             setNewEvent({ title: '', color: '#000000' });
         } catch (error) {
             console.error('Error adding event:', error);
@@ -62,15 +62,15 @@ function CalendarComponent() {
             if (!eventToUpdate.completed) {
                 // Mark event as completed
                 try {
-                    const res = await axios.put(`/api/events/${eventId}`, { completed: true });
-                    setEvents(events.map((event) => (event._id === eventId ? res.data : event)));
+                    const updatedEvent = await eventService.updateEvent(eventId, { completed: true });
+                    setEvents(events.map((event) => (event._id === eventId ? updatedEvent : event)));
                 } catch (error) {
                     console.error('Error updating event:', error);
                 }
             } else {
                 // Hide the event from the interface
                 try {
-                    const res = await axios.put(`/api/events/${eventId}`, { hidden: true });
+                    const updatedEvent = await eventService.updateEvent(eventId, { hidden: true });
                     setEvents(events.filter((event) => event._id !== eventId));
                 } catch (error) {
                     console.error('Error updating event:', error);
@@ -96,6 +96,7 @@ function CalendarComponent() {
                         <div
                             key={event._id}
                             className={`event-tile ${event.completed ? 'completed' : ''} ${event.hidden ? 'hidden' : ''}`}
+                            style={{ backgroundColor: event.color }}
                             onClick={() => handleEventClick(event._id)}
                         >
                             {event.title}
@@ -107,7 +108,7 @@ function CalendarComponent() {
     };
 
     return (
-        <div>
+        <div className="calendar-container">
             <h2>Calendar</h2>
             <Calendar
                 onChange={handleDateChange}

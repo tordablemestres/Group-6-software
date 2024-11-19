@@ -6,7 +6,8 @@ import TodoList from './components/TodoList';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import CalendarComponent from './components/CalendarComponent';
-import './App.css'; // Import the new CSS file
+import Logout from './components/Logout';
+import './App.css';
 
 function App() {
     return (
@@ -21,17 +22,22 @@ function App() {
                     <Route
                         path="/home"
                         element={
-                            <div className="main-container">
-                                <div className="sidebar">
-                                    <BudgetInputForm />
+                            <>
+                                <div className="header">
+                                    <Logout />
                                 </div>
-                                <div className="calendar">
-                                    <CalendarComponent />
+                                <div className="main-container">
+                                    <div className="sidebar">
+                                        <BudgetInputForm />
+                                    </div>
+                                    <div className="calendar">
+                                        <CalendarComponent />
+                                    </div>
+                                    <div className="sidebar">
+                                        <TodoList />
+                                    </div>
                                 </div>
-                                <div className="sidebar">
-                                    <TodoList />
-                                </div>
-                            </div>
+                            </>
                         }
                     />
                 </Routes>

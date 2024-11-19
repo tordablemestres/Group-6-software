@@ -2,51 +2,45 @@
 const express = require('express');
 const router = express.Router();
 const Expense = require('../models/Expense');
+const auth = require('../middleware/auth');
 
-// GET all expenses
-router.get('/', async (req, res) => {
+// Get all expenses for the authenticated user
+router.get('/', auth, async (req, res) => {
     try {
-        const expenses = await Expense.find();
+        const expenses = await Expense.find({ user: req.user.userId });
         res.json(expenses);
-    } catch (err) {
-        console.error('Error fetching expenses:', err);
+    } catch (error) {
+        console.error('Error fetching expenses:', error);
         res.status(500).json({ message: 'Server error' });
     }
 });
 
-// POST a new expense
-router.post('/', async (req, res) => {
+// Create a new expense
+router.post('/', auth, async (req, res) => {
     const { amount, description, category } = req.body;
-
-    if (!description || !category || isNaN(amount)) {
-        return res.status(400).json({ message: 'Please provide all required fields.' });
-    }
-
-    const expense = new Expense({
-        amount,
-        description,
-        category,
-    });
-
     try {
-        const newExpense = await expense.save();
-        res.status(201).json(newExpense);
-    } catch (err) {
-        console.error('Error adding expense:', err);
-        res.status(500).json({ message: 'Server error.' });
+        const newExpense = new Expense({
+            amount,
+            description,
+            category,
+            user: req.user.userId,
+        });
+        const savedExpense = await newExpense.save();
+        res.status(201).json(savedExpense);
+    } catch (error) {
+        console.error('Error creating expense:', error);
+        res.status(500).json({ message: 'Server error' });
     }
 });
 
-// DELETE an expense
-router.delete('/:id', async (req, res) => {
-    const expenseId = req.params.id;
-
+// Delete an expense
+router.delete('/:id', auth, async (req, res) => {
     try {
-        const deletedExpense = await Expense.findByIdAndDelete(expenseId);
+        const deletedExpense = await Expense.findOneAndDelete({ _id: req.params.id, user: req.user.userId });
         if (!deletedExpense) {
             return res.status(404).json({ message: 'Expense not found' });
         }
-        res.status(200).json({ message: 'Expense deleted successfully' });
+        res.json({ message: 'Expense deleted' });
     } catch (error) {
         console.error('Error deleting expense:', error);
         res.status(500).json({ message: 'Server error' });

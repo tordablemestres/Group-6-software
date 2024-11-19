@@ -2,11 +2,12 @@
 const express = require('express');
 const router = express.Router();
 const Event = require('../models/Event');
+const auth = require('../middleware/auth');
 
-// Get all events (adjust to fetch events for the logged-in user when authentication is implemented)
-router.get('/', async (req, res) => {
+// Get all events for the authenticated user
+router.get('/', auth, async (req, res) => {
     try {
-        const events = await Event.find({ hidden: { $ne: true } });
+        const events = await Event.find({ user: req.user.userId, hidden: { $ne: true } });
         res.json(events);
     } catch (error) {
         console.error('Error fetching events:', error);
@@ -15,14 +16,14 @@ router.get('/', async (req, res) => {
 });
 
 // Create a new event
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
     const { title, date, color } = req.body;
     try {
         const newEvent = new Event({
             title,
             date,
             color,
-            // user: req.user.id, // Use when authentication is implemented
+            user: req.user.userId,
         });
         const savedEvent = await newEvent.save();
         res.status(201).json(savedEvent);
@@ -32,19 +33,24 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Update an event's completed or hidden status
-router.put('/:id', async (req, res) => {
+// Update an event
+router.put('/:id', auth, async (req, res) => {
     const { completed, hidden } = req.body;
     try {
         const updateFields = {};
         if (completed !== undefined) updateFields.completed = completed;
         if (hidden !== undefined) updateFields.hidden = hidden;
 
-        const updatedEvent = await Event.findByIdAndUpdate(
-            req.params.id,
+        const updatedEvent = await Event.findOneAndUpdate(
+            { _id: req.params.id, user: req.user.userId },
             updateFields,
             { new: true }
         );
+
+        if (!updatedEvent) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
+
         res.json(updatedEvent);
     } catch (error) {
         console.error('Error updating event:', error);
@@ -52,10 +58,13 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// (Optional) Delete an event
-router.delete('/:id', async (req, res) => {
+// Delete an event
+router.delete('/:id', auth, async (req, res) => {
     try {
-        await Event.findByIdAndDelete(req.params.id);
+        const deletedEvent = await Event.findOneAndDelete({ _id: req.params.id, user: req.user.userId });
+        if (!deletedEvent) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
         res.json({ message: 'Event deleted' });
     } catch (error) {
         console.error('Error deleting event:', error);
