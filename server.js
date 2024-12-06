@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const path = require('path');
+
 const app = express();
 
 // Middleware
@@ -26,8 +27,8 @@ app.use('/api/expenses', expenseRoutes);
 const taskRoutes = require('./routes/tasks');
 app.use('/api/tasks', taskRoutes);
 
-const authRoutes = require('./routes/auth'); // Add this line
-app.use('/api/auth', authRoutes); // Add this line
+const authRoutes = require('./routes/auth');
+app.use('/api/auth', authRoutes);
 
 const eventRoutes = require('./routes/events');
 app.use('/api/events', eventRoutes);
@@ -43,6 +44,6 @@ if (process.env.NODE_ENV === 'production') {
     });
 }
 
-// Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+// IMPORTANT: Do NOT call app.listen() here
+// Just export the app for use in tests and in start.js
+module.exports = app;
